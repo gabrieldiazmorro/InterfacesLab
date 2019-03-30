@@ -1,11 +1,15 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,8 +21,6 @@ import org.junit.Test;
  * 		- add(Card c)
  * 		- equals(CardDeck cd)
  * 		- get(int index)
- * 		- getDeck()
- * 		- getCardCount()
  * - These methods from Card are correct:
  * 		- clone()
  * 		- equals(Card c)
@@ -179,9 +181,9 @@ public class CardWrapperTester {
 		
 		CardWrapper.Card[] fullArray = cdFull.getDeck();
 		int cardCount = cdFull.getCardCount();
-		CardWrapper.Card halfFullDealtCard1 = cdHalfFull.dealCard();
-		CardWrapper.Card halfFullDealtCard2 = cdHalfFull.dealCard();
-		CardWrapper.Card fullDealtCard = cdFull.dealCard();
+		CardWrapper.Card halfFullDealtCard1 = ((CardWrapper.Dealable)cdHalfFull).dealCard();
+		CardWrapper.Card halfFullDealtCard2 = ((CardWrapper.Dealable)cdHalfFull).dealCard();
+		CardWrapper.Card fullDealtCard = ((CardWrapper.Dealable)cdFull).dealCard();
 		CardWrapper.Card[] fullArrayAfter = cdFull.getDeck();
 
 				
@@ -218,11 +220,15 @@ public class CardWrapperTester {
 		assertTrue("The class must implement the Dealable interface", cdHalfFull instanceof CardWrapper.Dealable);
 
 		CardWrapper.Card[] customDeck1 = { c1, c2, c3 ,c4, c5, c6, c1clone };
-		CardWrapper.CardDeck cdCustom = new CardWrapper.CardDeck(customDeck1);
-		CardWrapper.CardDeck cdCustomCopy = new CardWrapper.CardDeck(customDeck1);
+		CardWrapper.Dealable dealCustom = new CardWrapper.CardDeck(customDeck1);
+		CardWrapper.Dealable dealCustomCopy = new CardWrapper.CardDeck(customDeck1);
 		
-		cdCustom.shuffleDeck();
-		cdCustomCopy.shuffleDeck();
+		dealCustom.shuffleDeck();
+		dealCustomCopy.shuffleDeck();
+		cdHalfFull.shuffleDeck();
+		
+		CardWrapper.CardDeck cdCustom = (CardWrapper.CardDeck) dealCustom;
+		CardWrapper.CardDeck cdCustomCopy = (CardWrapper.CardDeck) dealCustomCopy;
 		
 		// Make sure its not the original combination.
 		assertFalse("Same combination returned.", 
@@ -272,5 +278,9 @@ public class CardWrapperTester {
 						|| c6.equals(cdCustom.getCard(4)) || c6.equals(cdCustom.getCard(5))
 						||c6.equals(cdCustom.getCard(6)));
 
+		// Checks that the nulls are not included in the randomization.
+		for(int i = 0; i < cdHalfFull.getCardCount(); i++) {
+			assertFalse("A null should not be found here.", null == cdHalfFull.getCard(i));
+		}
 	}
 }
