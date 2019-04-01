@@ -20,7 +20,9 @@ import org.junit.Test;
  * 		- CardDeck(Card[] deck)
  * 		- add(Card c)
  * 		- equals(CardDeck cd)
- * 		- get(int index)
+ * 		- getCard(int index)
+ * 		- getDeck()
+ * 		- getCardCount()
  * - These methods from Card are correct:
  * 		- clone()
  * 		- equals(Card c)
@@ -150,7 +152,10 @@ public class CardWrapperTester {
 		assertTrue("The first card should be lesser than the second card", c4.compareTo(c1) < 0);
 		
 		assertTrue("The first card should be greater than the second card", c1.compareTo(c6) > 0);
-		assertTrue("The first card should be lesser than the second card", c6.compareTo(c1) < 0);		
+		assertTrue("The first card should be lesser than the second card", c6.compareTo(c1) < 0);	
+		
+		assertTrue("The first card should be greater than the second card", c5.compareTo(c6) < 0);
+		assertTrue("The first card should be lesser than the second card", c6.compareTo(c5) > 0);
 		
 		assertTrue("The first card should be equal to the second card", c1.compareTo(c1) == 0);		
 		assertTrue("The first card should be equal to the second card", c1.compareTo(c1clone) == 0);	
