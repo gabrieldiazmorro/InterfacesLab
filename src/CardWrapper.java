@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -5,14 +6,20 @@ import java.util.Random;
 
 public class CardWrapper { 
 
+	public static interface Dealable {
+		public  Card dealCard();
+		public void shuffleDeck();
+	}
+	
 	/**
 	 * Card Collection Class
 	 */
-	public static class CardDeck {
+	public static class CardDeck implements Cloneable,Collection<Card>, Dealable{
 
 		private Card[] deck;
 		private int cardCount;
-
+ 
+		
 		/**
 		 * Bare Constructor
 		 * By giving a size it will reserve that space
@@ -22,6 +29,14 @@ public class CardWrapper {
 		public CardDeck(int size) {
 			deck = new Card[size];
 			cardCount = 0;
+		}
+		@Override
+		public CardDeck clone() {
+			CardDeck cloneDeck = new CardDeck(deck.length);
+			for (int i = 0; i < cardCount; i++) {
+				cloneDeck.add(deck[i].clone());
+			}
+			return cloneDeck;
 		}
 
 		/**
@@ -99,6 +114,105 @@ public class CardWrapper {
 				if(!deck[idx].equals(cd.deck[idx])) { return false; }
 			}
 			return true;
+		}
+		@Override
+		public Iterator<Card> iterator() {
+			// TODO Auto-generated method stub
+		
+			return new DeckIterator(this);
+		}
+		@Override
+		public int size() {
+			int count =0;
+			for (Card card : deck) {
+				if(card!=null) {
+					count++;
+				}
+			}
+			return count;
+		}
+		@Override
+		public boolean isEmpty() {
+			int count =0;
+			for (Card card : deck) {
+				if(card!=null) {
+					count++;
+				}
+			}
+			if(count == 0) {
+				return true;
+			}
+			return false;
+		}
+		@Override
+		public boolean contains(Object o) {
+			int count =0;
+			for (Card card : deck) {
+				if(card==o) {
+					return true;
+				}
+			}
+			return false;
+		}
+		@Override
+		public Object[] toArray() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public <T> T[] toArray(T[] a) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public boolean remove(Object o) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public boolean containsAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public boolean addAll(Collection<? extends Card> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public void clear() {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public Card dealCard() {
+			Card first = deck[0];
+			for (int i = 0; i < deck.length-1; i++) {
+				deck[i]= deck[i+1];
+			
+			}
+			deck[deck.length-1] =null;
+			this.cardCount = this.cardCount-1;
+			return first;
+		}
+		@Override
+		public void shuffleDeck() {
+			// TODO Auto-generated method stub
+			Random rand = new Random();
+			Card firstcard = deck[0];
+			int randpos =rand.nextInt(cardCount);
+			deck[0]= deck[randpos];
+			deck[randpos]= firstcard;
 		}
 
 		/*  vvvvvvv Not in Use vvvvvvvv [Addd a front slash at the end * 
@@ -200,7 +314,7 @@ public class CardWrapper {
 	/**
 	 * Card Class
 	 */
-	public static class Card implements Cloneable {
+	public static class Card implements Cloneable,Comparable<Card>{
 		Suit suit;
 		Rank rank;
 
@@ -236,5 +350,18 @@ public class CardWrapper {
 			Card c = (Card) arg0;
 			return suit == c.suit && rank == c.rank;
 		}
+
+		@Override
+		public int compareTo(Card o) {
+			if(this.rank.compareTo(o.rank) ==0) {
+				if(this.suit.compareTo(o.suit) ==0) {
+					return 0;
+				}
+				return this.suit.compareTo(o.suit);
+			}
+			return this.rank.compareTo(o.rank);
+		}
 	}
+
+	
 }

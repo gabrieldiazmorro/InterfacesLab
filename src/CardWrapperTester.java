@@ -1,18 +1,13 @@
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import org.junit.Before;
 import org.junit.Test;
-
 /**
  * Assumptions:
  * - These method from CardDeck are correct:
@@ -20,20 +15,15 @@ import org.junit.Test;
  * 		- CardDeck(Card[] deck)
  * 		- add(Card c)
  * 		- equals(CardDeck cd)
- * 		- getCard(int index)
- * 		- getDeck()
- * 		- getCardCount()
+ * 		- get(int index)
  * - These methods from Card are correct:
  * 		- clone()
  * 		- equals(Card c)
  */
-
 public class CardWrapperTester {
-
 	CardWrapper.CardDeck cdEmpty;
 	CardWrapper.CardDeck cdHalfFull;
 	CardWrapper.CardDeck cdFull;
-
 	CardWrapper.Card c1;
 	CardWrapper.Card c2;
 	CardWrapper.Card c3;
@@ -41,7 +31,6 @@ public class CardWrapperTester {
 	CardWrapper.Card c5;
 	CardWrapper.Card c6;
 	CardWrapper.Card c1clone;
-
 	@Before
 	public void setUp() {
 		c1 = new CardWrapper.Card(
@@ -57,37 +46,29 @@ public class CardWrapperTester {
 		c6 = new CardWrapper.Card(
 				CardWrapper.Suit.CLUBS, CardWrapper.Rank.TEN);
 		c1clone = c1.clone();
-
 		CardWrapper.Card[] deck1 = {c1, c2, c3};
-
 		cdEmpty = new CardWrapper.CardDeck(0); 
 		cdHalfFull = new CardWrapper.CardDeck(deck1);
 		cdHalfFull.add(c4);
 		cdFull = new CardWrapper.CardDeck(deck1); 
 
-
 	}
-
 	@Test
 	public void testClone() {
 		// Check interface
 		assertTrue("CardDeck should implement interface Cloneable",
 				cdEmpty instanceof Cloneable);
-
 		// Get Deck
 		CardWrapper.Card[] fullDeck = cdFull.getDeck();
-
 		// Clone Collections
 		CardWrapper.CardDeck cdEmptyClone= cdEmpty.clone();
 		CardWrapper.CardDeck cdHalfFullClone= cdHalfFull.clone();
 		CardWrapper.CardDeck cdFullClone= cdFull.clone();
-
 		// Check Object Uniqueness
 		assertFalse("Clone should return a new instance of CardDeck",
 				cdFull == cdFullClone);		
 		assertFalse("Clone should return a new instance of CardDeck",
 				cdEmpty == cdEmptyClone);
-
 		// Check If Objects are Equal
 		assertEquals("The clone should have the same attributes as the original",
 				cdEmpty, cdEmptyClone);		
@@ -95,13 +76,10 @@ public class CardWrapperTester {
 				cdFull, cdFullClone);
 		assertEquals("The clone should have the same attributes as the original",
 				cdHalfFull, cdHalfFullClone);
-
 		// Check if inner array is not changed
 		CardWrapper.Card[] fullDeckAfterClone = cdFull.getDeck();
-
 		assertTrue("The original card deck must not change",
 				Arrays.equals(fullDeck, fullDeckAfterClone));
-
 		// Checks if the card count was updated.
 		assertEquals("The card count is not being updated", cdHalfFull.getCardCount(), cdHalfFullClone.getCardCount());
 		
@@ -113,7 +91,6 @@ public class CardWrapperTester {
 		assertFalse("Card members must also be cloned", 
 				cdFull.getCard(2) == cdFullClone.getCard(2));
 	}
-
 	@Test
 	public void testIsEmpty() {
 		assertTrue("Class must implement the Collection interface", 
@@ -122,7 +99,6 @@ public class CardWrapperTester {
 		assertFalse("This deck not is empty", cdHalfFull.isEmpty());
 		assertFalse("This deck not is empty", cdFull.isEmpty());
 	}
-
 	@Test
 	public void testSize() {
 		assertTrue("Class must implement the Collection interface", 
@@ -131,7 +107,6 @@ public class CardWrapperTester {
 		assertEquals("This deck has 4 items", 4,cdHalfFull.size());
 		assertEquals("This deck has 3 items", 3,cdFull.size());
 	}
-
 	@Test
 	public void testContains() {
 		assertTrue("Class must implement the Collection interface", 
@@ -142,7 +117,6 @@ public class CardWrapperTester {
 		assertTrue("This does contain this card", cdHalfFull.contains(c4));
 		assertTrue("This does contain this card", cdFull.contains(c3));
 	}
-
 	@Test
 	public void testCompareTo() {
 		
@@ -152,33 +126,25 @@ public class CardWrapperTester {
 		assertTrue("The first card should be lesser than the second card", c4.compareTo(c1) < 0);
 		
 		assertTrue("The first card should be greater than the second card", c1.compareTo(c6) > 0);
-		assertTrue("The first card should be lesser than the second card", c6.compareTo(c1) < 0);	
-		
-		assertTrue("The first card should be greater than the second card", c5.compareTo(c6) < 0);
-		assertTrue("The first card should be lesser than the second card", c6.compareTo(c5) > 0);
+		assertTrue("The first card should be lesser than the second card", c6.compareTo(c1) < 0);		
 		
 		assertTrue("The first card should be equal to the second card", c1.compareTo(c1) == 0);		
 		assertTrue("The first card should be equal to the second card", c1.compareTo(c1clone) == 0);	
 	}
-
 	@Test
 	public void testIterable() {
-
 		//Initially verifies that CardDeck implements Iterable interface to avoid further exceptions
 		assertTrue("CardDeck should implement Iterable interface", cdHalfFull instanceof Iterable);
 		assertTrue("CardDeck should implement Iterable interface", cdEmpty instanceof Iterable);
 
-
 		Iterator<CardWrapper.Card> iter = cdHalfFull.iterator();
 		Iterator<CardWrapper.Card> iter2 = cdEmpty.iterator();
-
 		//Verifies that the iterators implements the Iterator interface and are of class DeckIterator
 		assertTrue("iter should implement Iterator interface", iter instanceof Iterator);
 		assertTrue("iter2 should implement Iterator interface", iter2 instanceof Iterator);	
 		assertTrue("iter should be DeckIterable class", iter instanceof CardWrapper.DeckIterator);
 		assertTrue("iter2 should be DeckIterable class", iter2 instanceof CardWrapper.DeckIterator);
 	}
-
 	@Test 
 	public void testDealCard() {
 		
@@ -186,11 +152,10 @@ public class CardWrapperTester {
 		
 		CardWrapper.Card[] fullArray = cdFull.getDeck();
 		int cardCount = cdFull.getCardCount();
-		CardWrapper.Card halfFullDealtCard1 = ((CardWrapper.Dealable)cdHalfFull).dealCard();
-		CardWrapper.Card halfFullDealtCard2 = ((CardWrapper.Dealable)cdHalfFull).dealCard();
-		CardWrapper.Card fullDealtCard = ((CardWrapper.Dealable)cdFull).dealCard();
+		CardWrapper.Card halfFullDealtCard1 = cdHalfFull.dealCard();
+		CardWrapper.Card halfFullDealtCard2 = cdHalfFull.dealCard();
+		CardWrapper.Card fullDealtCard = cdFull.dealCard();
 		CardWrapper.Card[] fullArrayAfter = cdFull.getDeck();
-
 				
 		// Verify that the dealt card is the first card in original deck
 		
@@ -223,17 +188,12 @@ public class CardWrapperTester {
 	public void testShuffleDeck() {
 		
 		assertTrue("The class must implement the Dealable interface", cdHalfFull instanceof CardWrapper.Dealable);
-
 		CardWrapper.Card[] customDeck1 = { c1, c2, c3 ,c4, c5, c6, c1clone };
-		CardWrapper.Dealable dealCustom = new CardWrapper.CardDeck(customDeck1);
-		CardWrapper.Dealable dealCustomCopy = new CardWrapper.CardDeck(customDeck1);
+		CardWrapper.CardDeck cdCustom = new CardWrapper.CardDeck(customDeck1);
+		CardWrapper.CardDeck cdCustomCopy = new CardWrapper.CardDeck(customDeck1);
 		
-		dealCustom.shuffleDeck();
-		dealCustomCopy.shuffleDeck();
-		cdHalfFull.shuffleDeck();
-		
-		CardWrapper.CardDeck cdCustom = (CardWrapper.CardDeck) dealCustom;
-		CardWrapper.CardDeck cdCustomCopy = (CardWrapper.CardDeck) dealCustomCopy;
+		cdCustom.shuffleDeck();
+		cdCustomCopy.shuffleDeck();
 		
 		// Make sure its not the original combination.
 		assertFalse("Same combination returned.", 
@@ -282,10 +242,5 @@ public class CardWrapperTester {
 						|| c6.equals(cdCustom.getCard(2)) || c6.equals(cdCustom.getCard(3))
 						|| c6.equals(cdCustom.getCard(4)) || c6.equals(cdCustom.getCard(5))
 						||c6.equals(cdCustom.getCard(6)));
-
-		// Checks that the nulls are not included in the randomization.
-		for(int i = 0; i < cdHalfFull.getCardCount(); i++) {
-			assertFalse("A null should not be found here.", null == cdHalfFull.getCard(i));
-		}
 	}
 }
